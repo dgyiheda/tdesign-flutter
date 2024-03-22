@@ -25,7 +25,7 @@ class TDInput extends StatelessWidget {
       this.textStyle,
       this.backgroundColor,
       this.decoration,
-      this.leftIcon,// leftIcon is default designed 24 in size.
+      this.leftIcon, // leftIcon is default designed 24 in size.
       this.leftLabel,
       this.leftLabelStyle,
       this.required,
@@ -61,10 +61,11 @@ class TDInput extends StatelessWidget {
       this.clearBtnColor,
       this.contentAlignment = TextAlign.start,
       this.rightWidget,
-        this.showBottomDivider = true,
+      this.showBottomDivider = true,
       this.cardStyle,
       this.cardStyleTopText,
-      this.cardStyleBottomText})
+      this.cardStyleBottomText,
+      this.dividerColor})
       : assert(() {
           if (type == TDInputType.cardStyle) {
             // card style must be shorter than the screen width, so please set a
@@ -85,7 +86,8 @@ class TDInput extends StatelessWidget {
                                 : (leftLabel!.length > 5
                                     ? 5.1
                                     : leftLabel.length)) *
-                            16 + 1 +
+                            16 +
+                        1 +
                         (leftIcon != null ? 1 : 0) * 28) +
                     (required == true ? 1 : 0) * 14),
         height = 56,
@@ -180,7 +182,7 @@ class TDInput extends StatelessWidget {
 
   /// 右侧删除点击
   final GestureTapCallback? onClearTap;
-  
+
   /// 是否需要右侧按钮变为删除
   final bool needClear;
 
@@ -225,6 +227,12 @@ class TDInput extends StatelessWidget {
 
   /// 左侧标签样式
   final TextStyle? leftLabelStyle;
+
+  // 分割线颜色
+  final Color? dividerColor;
+
+// 改变值
+  final ChangeValue changeValue = ChangeValue();
 
   /// 获取输入框规格
   double getInputPadding() {
@@ -356,15 +364,16 @@ class TDInput extends StatelessWidget {
                       controller: controller,
                       contentPadding: contentPadding ??
                           EdgeInsets.only(
-                              left: 16,
+                              left: 0,
                               right: 16,
-                              bottom: additionInfo != '' ? 4 : getInputPadding(),
+                              bottom:
+                                  additionInfo != '' ? 4 : getInputPadding(),
                               top: getInputPadding()),
                     ),
                     Visibility(
                       child: Padding(
-                        padding: EdgeInsets.only(
-                            left: 16, bottom: getInputPadding()),
+                        padding:
+                            EdgeInsets.only(left: 0, bottom: getInputPadding()),
                         child: TDText(
                           additionInfo,
                           font: TDTheme.of(context).fontBodySmall,
@@ -378,25 +387,33 @@ class TDInput extends StatelessWidget {
                 ),
               ),
               Visibility(
-                visible: controller != null && controller!.text.isNotEmpty && needClear,
+                visible:
+                    controller != null && controller!.text != '' && needClear,
                 child: GestureDetector(
-                  child: Container(
-                    margin: EdgeInsets.only(left: 17.5, right: 16, top: additionInfo != '' ? getInputPadding() : 0),
-                    child: Icon(
-                      TDIcons.close_circle_filled,
-                      color: clearBtnColor ?? TDTheme.of(context).fontGyColor3,
+                    child: Container(
+                      margin: EdgeInsets.only(
+                          left: 17.5,
+                          right: 16,
+                          top: additionInfo != '' ? getInputPadding() : 0),
+                      child: Icon(
+                        TDIcons.close_circle_filled,
+                        color:
+                            clearBtnColor ?? TDTheme.of(context).fontGyColor3,
+                      ),
                     ),
-                  ),
-                  onTap: onClearTap ?? (){
-                    controller?.text = '';
-                  }
-                ),
+                    onTap: onClearTap ??
+                        () {
+                          controller?.text = '';
+                        }),
                 replacement: Visibility(
                   visible: rightBtn != null,
                   child: GestureDetector(
                     onTap: onBtnTap,
                     child: Container(
-                      margin: EdgeInsets.only(left: 17.5, right: 16, top: additionInfo != '' ? getInputPadding() : 0),
+                      margin: EdgeInsets.only(
+                          left: 17.5,
+                          right: 16,
+                          top: additionInfo != '' ? getInputPadding() : 0),
                       child: rightBtn,
                     ),
                   ),
@@ -407,10 +424,11 @@ class TDInput extends StatelessWidget {
         ),
         Visibility(
           visible: type != TDInputType.cardStyle,
-          child: const TDDivider(
-            margin: EdgeInsets.only(
-              left: 16,
+          child: TDDivider(
+            margin: const EdgeInsets.only(
+              left: 0,
             ),
+            color: dividerColor,
           ),
         ),
       ],
@@ -524,13 +542,16 @@ class TDInput extends StatelessWidget {
                       ),
                     ),
                     Visibility(
-                      visible: controller != null && controller!.text.isNotEmpty && needClear,
+                      visible: controller != null &&
+                          controller!.text.isNotEmpty &&
+                          needClear,
                       child: GestureDetector(
                         child: Container(
                           margin: const EdgeInsets.only(left: 17.5, right: 16),
                           child: Icon(
                             TDIcons.close_circle_filled,
-                            color: clearBtnColor ?? TDTheme.of(context).fontGyColor3,
+                            color: clearBtnColor ??
+                                TDTheme.of(context).fontGyColor3,
                           ),
                         ),
                         onTap: onClearTap,
@@ -540,7 +561,8 @@ class TDInput extends StatelessWidget {
                         child: GestureDetector(
                           onTap: onBtnTap,
                           child: Container(
-                            margin: const EdgeInsets.only(left: 17.5, right: 16),
+                            margin:
+                                const EdgeInsets.only(left: 17.5, right: 16),
                             child: rightBtn,
                           ),
                         ),
@@ -551,14 +573,23 @@ class TDInput extends StatelessWidget {
               ),
             ],
           ),
-          const Visibility(
+          Visibility(
             child: TDDivider(
-              margin: EdgeInsets.only(
+              margin: const EdgeInsets.only(
                 left: 16,
               ),
+              color: dividerColor,
             ),
           ),
-          Visibility(child: const TDDivider(margin: EdgeInsets.only(left: 16, ),), visible: showBottomDivider,),
+          Visibility(
+            child: TDDivider(
+              margin: const EdgeInsets.only(
+                left: 16,
+              ),
+              color: dividerColor,
+            ),
+            visible: showBottomDivider,
+          ),
         ],
       ),
     );
@@ -588,10 +619,11 @@ class TDInput extends StatelessWidget {
                       maxLines: 2,
                       fontWeight: FontWeight.w400,
                     )),
-                const TDDivider(
-                  margin: EdgeInsets.only(
+                TDDivider(
+                  margin: const EdgeInsets.only(
                     left: 16,
                   ),
+                  color: dividerColor,
                 ),
               ],
             ),
@@ -610,8 +642,8 @@ class TDInput extends StatelessWidget {
               inputType: inputType,
               textAlign: textAlign,
               onChanged: onChanged,
-              inputFormatters:
-                  inputFormatters ?? [LengthLimitingTextInputFormatter(maxLength)],
+              inputFormatters: inputFormatters ??
+                  [LengthLimitingTextInputFormatter(maxLength)],
               inputDecoration: inputDecoration,
               maxLines: maxLines,
               focusNode: focusNode,
@@ -726,11 +758,12 @@ class TDInput extends StatelessWidget {
             ],
           ),
         ),
-        const Visibility(
+        Visibility(
           child: TDDivider(
-            margin: EdgeInsets.only(
+            margin: const EdgeInsets.only(
               left: 16,
             ),
+            color: dividerColor,
           ),
         ),
       ],
@@ -801,39 +834,50 @@ class TDInput extends StatelessWidget {
 }
 
 /// 中文算作两个字符类型的TextInputFormatter
-class Chinese2Formatter extends TextInputFormatter{
-
+class Chinese2Formatter extends TextInputFormatter {
   final int maxLength;
 
   Chinese2Formatter(this.maxLength);
 
   final _regExp = r'^[\u4E00-\u9FA5A-Za-z0-9_]+$';
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     var newValueLength = newValue.text.length;
     var count = 0;
-    if(newValueLength == 0){
+    if (newValueLength == 0) {
       return newValue;
     }
-    if(maxLength >0){
+    if (maxLength > 0) {
       for (var i = 0; i < newValueLength; i++) {
         if (newValue.text.codeUnitAt(i) > 122) {
           ///中文字符按照2个计算
           count++;
         }
-        if(i >0 && count +i > maxLength-1){
-          var text =newValue.text.substring(0,i);
-          return newValue.copyWith(text:text,composing:TextRange.empty,selection: TextSelection.fromPosition(
-              TextPosition(offset: i,affinity: TextAffinity.downstream)));
+        if (i > 0 && count + i > maxLength - 1) {
+          var text = newValue.text.substring(0, i);
+          return newValue.copyWith(
+              text: text,
+              composing: TextRange.empty,
+              selection: TextSelection.fromPosition(
+                  TextPosition(offset: i, affinity: TextAffinity.downstream)));
         }
       }
     }
-    if(newValueLength>0 && RegExp(_regExp).firstMatch(newValue.text)!=null){
-      if(newValueLength +count<= maxLength){
+    if (newValueLength > 0 &&
+        RegExp(_regExp).firstMatch(newValue.text) != null) {
+      if (newValueLength + count <= maxLength) {
         return newValue;
       }
     }
     return oldValue;
+  }
+}
+
+class ChangeValue extends ValueNotifier<bool> {
+  ChangeValue() : super(false);
+
+  void updateVisibility(String text) {
+    value = text.isNotEmpty;
   }
 }

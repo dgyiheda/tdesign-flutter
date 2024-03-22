@@ -129,7 +129,10 @@ class TDInputView extends StatelessWidget {
     );
   }
 
-  Widget? _buildCounter(BuildContext context, {required int currentLength, required bool isFocused, required int? maxLength}) {
+  Widget? _buildCounter(BuildContext context,
+      {required int currentLength,
+      required bool isFocused,
+      required int? maxLength}) {
     return null;
   }
 }
