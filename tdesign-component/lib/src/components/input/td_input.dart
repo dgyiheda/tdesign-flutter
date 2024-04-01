@@ -423,7 +423,7 @@ class TDInput extends StatelessWidget {
           ),
         ),
         Visibility(
-          visible: type != TDInputType.cardStyle,
+          visible: type != TDInputType.cardStyle && showBottomDivider,
           child: TDDivider(
             margin: const EdgeInsets.only(
               left: 0,
