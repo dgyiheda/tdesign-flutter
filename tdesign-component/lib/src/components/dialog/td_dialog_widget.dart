@@ -129,10 +129,12 @@ class TDDialogInfoWidget extends StatelessWidget {
     Key? key,
     this.title,
     this.titleColor = Colors.black,
-    this.padding = const EdgeInsets.fromLTRB(24, 32, 24, 0),
+    this.titleAlignment,
+    this.contentWidget,
     this.content,
     this.contentColor,
     this.contentMaxHeight = 0,
+    this.padding = const EdgeInsets.fromLTRB(24, 32, 24, 0),
   }) : super(key: key);
 
   /// 标题
@@ -140,6 +142,12 @@ class TDDialogInfoWidget extends StatelessWidget {
 
   /// 标题颜色
   final Color titleColor;
+
+  /// 标题对齐模式
+  final AlignmentGeometry? titleAlignment;
+
+  /// 内容Widget
+  final Widget? contentWidget;
 
   /// 内容
   final String? content;
@@ -162,26 +170,28 @@ class TDDialogInfoWidget extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          title != null
-              ? TDText(
-                  title,
-                  textColor: titleColor,
-                  fontWeight: FontWeight.w600,
-                  font: Font(size: 18, lineHeight: 26),
-                  textAlign: TextAlign.center,
-                )
-              : Container(),
-          content == null
-              ? Container()
-              : Container(
-                  padding: EdgeInsets.fromLTRB(
-                      0, (title != null && content != null) ? 8.0 : 0, 0, 0),
-                  constraints: contentMaxHeight > 0
-                      ? BoxConstraints(
-                          maxHeight: contentMaxHeight,
-                        )
-                      : null,
-                  child: Scrollbar(
+          if (title != null)
+            Align(
+              alignment: titleAlignment ?? Alignment.center,
+              child: TDText(
+                title,
+                textColor: titleColor,
+                fontWeight: FontWeight.w600,
+                font: Font(size: 18, lineHeight: 26),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          if (contentWidget != null || content != null)
+            Container(
+              padding: EdgeInsets.fromLTRB(
+                  0, (title != null && content != null) ? 8.0 : 0, 0, 0),
+              constraints: contentMaxHeight > 0
+                  ? BoxConstraints(
+                      maxHeight: contentMaxHeight,
+                    )
+                  : null,
+              child: contentWidget ??
+                  Scrollbar(
                     child: SingleChildScrollView(
                       scrollDirection: Axis.vertical,
                       child: TDDialogContent(
@@ -190,7 +200,7 @@ class TDDialogInfoWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
+            ),
         ],
       ),
     );
@@ -381,7 +391,8 @@ class TDDialogButton extends StatelessWidget {
       type: buttonType ?? TDButtonType.fill,
       theme: buttonTheme,
       text: buttonText,
-      textStyle: TextStyle(fontWeight: buttonTextFontWeight, color: buttonTextColor),
+      textStyle:
+          TextStyle(fontWeight: buttonTextFontWeight, color: buttonTextColor),
       width: width,
       height: height,
       isBlock: isBlock,
